@@ -16,20 +16,9 @@ REPLACING = "replacing"
 
 
 def argmax_action(values: np.ndarray, rng: np.random.Generator) -> int:
-    """Return the index of the largest value, breaking ties uniformly at random.
-
-    Ties are not an edge case here. The table starts uniform, so on the first
-    visit to a state every action is tied, and a plain np.argmax would commit
-    every state in the table to action 0.
-
-    Args:
-        values: the q-values of one state, shape (n_actions,)
-        rng: the agent's random generator
-
-    Returns:
-        int: an action
-    """
-    raise NotImplementedError
+    """Return the index of the largest value, breaking ties uniformly at random."""
+    best = np.flatnonzero(values == np.max(values))
+    return int(rng.choice(best))
 
 
 class SarsaLambdaAgent:
@@ -80,8 +69,7 @@ class SarsaLambdaAgent:
         self.q = self.init_qtable(init_val)
 
     def init_qtable(self, init_val: float = 0.0) -> np.ndarray:
-        """Build the q table, shape (n_states, n_actions), filled with init_val."""
-        raise NotImplementedError
+        return np.full((self.n_states, self.n_actions), init_val, dtype=float)
 
     def eps_greedy(self, state: int, exploration: bool = True) -> int:
         """Epsilon-greedy action selection over the current q table.
