@@ -52,6 +52,14 @@ class SarsaLambdaAgent:
         """
         if trace not in (ACCUMULATING, REPLACING):
             raise ValueError(f"unknown trace type: {trace}")
+        if not 0.0 <= gamma <= 1.0:
+            raise ValueError("gamma must be in [0, 1]")
+        if not 0.0 < alpha <= 1.0:
+            raise ValueError("alpha must be in (0, 1]")
+        if not 0.0 <= eps <= 1.0:
+            raise ValueError("eps must be in [0, 1]")
+        if not 0.0 <= lam <= 1.0:
+            raise ValueError("lam must be in [0, 1]")
 
         self.env = env
         self.n_states = env.observation_space.n
@@ -72,17 +80,9 @@ class SarsaLambdaAgent:
         return np.full((self.n_states, self.n_actions), init_val, dtype=float)
 
     def eps_greedy(self, state: int, exploration: bool = True) -> int:
-        """Epsilon-greedy action selection over the current q table.
-
-        Args:
-            state: the current state
-            exploration: explore with probability eps if True; act greedily if
-                False. The greedy path is what best_run uses.
-
-        Returns:
-            int: an action
-        """
-        raise NotImplementedError
+        if exploration and self.rng.random() < self.eps:
+            return int(self.rng.integers(self.n_actions))
+        return argmax_action(self.q[state], self.rng)
 
     def learn(self) -> list[float]:
         """Run SARSA(lambda) for self.total_epi episodes, updating self.q.
@@ -108,8 +108,9 @@ class SarsaLambdaAgent:
         raise NotImplementedError
 
     def calc_return(self, episode: list[tuple[Any, Any, float]], discounted: bool = False) -> float:
-        """Return of an episode given as [(s, a, r), ...]."""
-        raise NotImplementedError
+        if not discounted:
+            return float(sum(reward for _, _, reward in episode))
+        return float(sum((self.gamma**time) * reward for time, (_, _, reward) in enumerate(episode)))
 
 
 class RandomAgent(SarsaLambdaAgent):
