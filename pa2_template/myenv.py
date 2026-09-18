@@ -14,7 +14,6 @@ from gymnasium.spaces import Discrete
 
 
 class MyEnv(gym.Env):
-    """TODO: one line on what this world is and what the agent is trying to do."""
     """robot is trying to reach every tower with a limited amount of battery and with a non-guarenteed chance of moving correctly"""
 
     metadata = {"render_modes": ["ansi"], "render_fps": 4}
@@ -105,16 +104,17 @@ class MyEnv(gym.Env):
                 terminated = True
                 reward -= 20
             else:
-                self._handleAdvance(self.ADVANCED_PROBABILITY, self.PUSHBACK_PROBABILITY, 1, 1)
+                self._handleAdvance(self.ADVANCED_PROBABILITY, self.DELAYED_PROBABILITY, 1, 1)
         elif action == 2:  # express advance
             if self.battery < 2:  # advanced with not enough battery
                 terminated = True
                 reward -= 20
             else:
-                self._handleAdvance(self.EXPRESS_ADVANCED_PROBABILITY, self.EXPRESS_PUSHBACK_PROBABILITY, 2, 2)
+                self._handleAdvance(self.EXPRESS_ADVANCED_PROBABILITY, self.EXPRESS_DELAYED_PROBABILITY, 2, 2)
         else:
             raise ValueError(f"Invalid action: {action}")
 
+        # goal reached
         if self.tower_loc == self.N_TOWERS - 1:
             terminated = True
             reward += 20
