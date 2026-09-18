@@ -118,7 +118,7 @@ class MyEnv(gym.Env):
         if self.tower_loc == self.N_TOWERS - 1:
             terminated = True
             reward += 20
-        else:
+        elif not terminated:
             reward -= 1
 
         return (
@@ -134,7 +134,7 @@ class MyEnv(gym.Env):
         if self.render_mode != "ansi":
             return None
         render_str = f"Current Tower: {self.tower_loc}\n"
-        f"Battery: {self.battery} / {self.MAX_BATTERY}\n"
+        render_str += f"Battery: {self.battery} / {self.MAX_BATTERY}\n"
 
         for i in range(self.N_TOWERS):
             if i == self.tower_loc:
