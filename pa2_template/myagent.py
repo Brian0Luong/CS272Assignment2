@@ -85,27 +85,56 @@ class SarsaLambdaAgent:
         return argmax_action(self.q[state], self.rng)
 
     def learn(self) -> list[float]:
-        """Run SARSA(lambda) for self.total_epi episodes, updating self.q.
+        returns: list[float] = []
 
-        Returns:
-            list[float]: the undiscounted return of each training episode, in
-            order. myrunner.py plots these.
-        """
-        raise NotImplementedError
+        for episode_number in range(self.total_epi):
+            reset_seed = self.seed if episode_number == 0 else None
+            state, _ = self.env.reset(seed=reset_seed)
+            action = self.eps_greedy(state)
+            eligibility = np.zeros_like(self.q)
+            total_return = 0.0
+
+            while True:
+                next_state, reward, terminated, truncated, _ = self.env.step(action)
+                total_return += reward
+
+                if terminated:
+                    delta = reward - self.q[state, action]
+                    next_action = None
+                else:
+                    next_action = self.eps_greedy(next_state)
+                    delta = reward + self.gamma * self.q[next_state, next_action] - self.q[state, action]
+
+                if self.trace == ACCUMULATING:
+                    eligibility[state, action] += 1.0
+                else:
+                    eligibility[state, action] = 1.0
+
+                self.q += self.alpha * delta * eligibility
+                eligibility *= self.gamma * self.lam
+
+                if terminated or truncated:
+                    break
+                state = next_state
+                action = next_action
+
+            returns.append(total_return)
+
+        return returns
 
     def best_run(self, max_steps: int = 300) -> tuple[list[tuple[int, int, float]], bool]:
-        """Generate one greedy episode under the learned q table, for the report.
+        state, _ = self.env.reset(seed=self.seed)
+        episode: list[tuple[int, int, float]] = []
 
-        Args:
-            max_steps: give up after this many steps.
+        for _ in range(max_steps):
+            action = self.eps_greedy(state, exploration=False)
+            next_state, reward, terminated, truncated, _ = self.env.step(action)
+            episode.append((state, action, reward))
+            if terminated or truncated:
+                return episode, terminated
+            state = next_state
 
-        Returns:
-            tuple[
-                list[tuple[int,int,float]]: the episode, as [(s, a, r), ...]
-                bool: True if it reached a terminal state, False if it ran out
-            ]
-        """
-        raise NotImplementedError
+        return episode, False
 
     def calc_return(self, episode: list[tuple[Any, Any, float]], discounted: bool = False) -> float:
         if not discounted:
