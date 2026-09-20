@@ -1,0 +1,2 @@
+Random mean return over 5000 episodes: -11.677
+Random final-500 mean: -11.756

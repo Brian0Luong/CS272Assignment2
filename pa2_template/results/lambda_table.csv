@@ -1,0 +1,6 @@
+lambda,mean_episodes_to_target,seeds_reaching_target,mean_final_return,final_return_std_across_seeds
+0.0,224.4,5/5,9.951,0.484
+0.3,145.2,5/5,10.67,0.366
+0.6,205.0,5/5,10.266,0.489
+0.9,131.6,5/5,10.251,0.474
+1.0,182.4,5/5,9.565,0.398

@@ -1,0 +1,42 @@
+Current Tower: 0
+Battery: 5 / 5
+R T T T T T T 
+
+
+Step 1: action=EXPRESS, reward=-1.0
+Current Tower: 2
+Battery: 3 / 5
+T T R T T T T 
+
+
+Step 2: action=ADVANCE, reward=-1.0
+Current Tower: 3
+Battery: 2 / 5
+T T T R T T T 
+
+
+Step 3: action=CHARGE, reward=-1.0
+Current Tower: 3
+Battery: 3 / 5
+T T T R T T T 
+
+
+Step 4: action=ADVANCE, reward=-1.0
+Current Tower: 4
+Battery: 2 / 5
+T T T T R T T 
+
+
+Step 5: action=CHARGE, reward=-1.0
+Current Tower: 4
+Battery: 3 / 5
+T T T T R T T 
+
+
+Step 6: action=EXPRESS, reward=20.0
+Current Tower: 6
+Battery: 1 / 5
+T T T T T T R 
+
+
+Episode return: 15.0; terminated=True; truncated=False
