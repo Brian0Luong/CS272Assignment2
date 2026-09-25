@@ -96,11 +96,9 @@ The drone cannot move below tower 0 or beyond tower 6. Any movement that would g
 
 An episode terminates when the following happen.
 
-```text
 - The drone reaches the final beacon at `N_TOWERS - 1` (tower 6).
 - The drone attempts a normal advance with 0 battery.
 - The drone attempts an express advance with less than 2 battery.
-```
 
 Upon reaching the final beacon, the agent receives a reward of 20.
 
