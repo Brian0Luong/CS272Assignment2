@@ -1,9 +1,7 @@
-"""Task 1: your own custom Gymnasium environment.
-
-Design the world yourself. The requirements it has to meet are in the assignment
-readme.
-
-Delete this docstring and describe your own world instead.
+"""
+    the world consists of 7 towers(0-6) and a robot
+    the robot has a battery of 5 (range 0-5)
+    towers are connected with two different lines, one line is the express line which skips a tower
 """
 
 import numpy as np
@@ -23,17 +21,15 @@ class MyEnv(gym.Env):
 
     ADVANCED_PROBABILITY = .9
     DELAYED_PROBABILITY = .07
-    PUSHBACK_PROBABILITY = .03
+    # PUSHBACK_PROBABILITY = .03  # un-needed but for easier reading
 
     EXPRESS_ADVANCED_PROBABILITY = .7
     EXPRESS_DELAYED_PROBABILITY = .2
-    EXPRESS_PUSHBACK_PROBABILITY = .1
+    # EXPRESS_PUSHBACK_PROBABILITY = .1  # un-needed but for easier reading
 
     def __init__(self, render_mode: str | None = None):
         """
-            the world consists of 7 towers and a robot
-            the robot has a battery of 5 (range 0-5)
-            each move consumes 1 battery
+            each move consumes 1 battery(except express tower)
             the robot at attempting to move has an 80% chance of moving forward, 15% chance of doing nothing, and 5% chance of going backwards
             there are two types of ways to move to a tower, express and normal lane
             express has a lower chance of success but moves 2 towers and takes 2 battery, normal moves 1 tower with a higher rate
@@ -60,7 +56,7 @@ class MyEnv(gym.Env):
 
         return self._get_obs(), self._get_info()
 
-    def _handleAdvance(self, success_rate, fail_rate, advance_amt, energy_usage):
+    def _handle_advance(self, success_rate, fail_rate, advance_amt, energy_usage):
         """
         handles advance attempts by the robot
         Args:
@@ -85,8 +81,6 @@ class MyEnv(gym.Env):
             self.tower_loc = 0
 
     def step(self, action: int):
-        # TODO: apply the action, with noise drawn from self.np_random.
-        #
         # Return terminated=True when the episode genuinely ends -- goal reached,
         # agent died, game over. Leave truncated as False and let the TimeLimit
         # wrapper from register() handle running out of time. The agent treats
@@ -104,13 +98,13 @@ class MyEnv(gym.Env):
                 terminated = True
                 reward -= 20
             else:
-                self._handleAdvance(self.ADVANCED_PROBABILITY, self.DELAYED_PROBABILITY, 1, 1)
+                self._handle_advance(self.ADVANCED_PROBABILITY, self.DELAYED_PROBABILITY, 1, 1)
         elif action == 2:  # express advance
             if self.battery < 2:  # advanced with not enough battery
                 terminated = True
                 reward -= 20
             else:
-                self._handleAdvance(self.EXPRESS_ADVANCED_PROBABILITY, self.EXPRESS_DELAYED_PROBABILITY, 2, 2)
+                self._handle_advance(self.EXPRESS_ADVANCED_PROBABILITY, self.EXPRESS_DELAYED_PROBABILITY, 2, 2)
         else:
             raise ValueError(f"Invalid action: {action}")
 
